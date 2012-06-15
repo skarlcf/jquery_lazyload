@@ -25,6 +25,12 @@
             effect          : "show",
             container       : window,
             data_attribute  : "original",
+            data_small      : "small",
+            data_medium     : "medium",
+            data_large      : "large",
+            size_medium     : 400,
+            size_large      : 800,
+            responsive      : false,
             skip_invisible  : true,
             appear          : null,
             load            : null
@@ -32,7 +38,7 @@
 
         function update() {
             var counter = 0;
-      
+
             elements.each(function() {
                 var $this = $(this);
                 if (settings.skip_invisible && !$this.is(":visible")) {
@@ -53,14 +59,22 @@
 
         }
 
+        function update_size() {
+            if (settings.responsive) {
+                if (screen.size > settings.size_large) settings.data_attribute = settings.data_large;
+                else if (screen.size <= settings.size_large && screen.size >= settings.size_medium) settings.data_attribute = settings.data_medium;
+                else settings.data_attribute = settings.data_small;
+            }
+        }
+
         if(options) {
             /* Maintain BC for a couple of versions. */
             if (undefined !== options.failurelimit) {
-                options.failure_limit = options.failurelimit; 
+                options.failure_limit = options.failurelimit;
                 delete options.failurelimit;
             }
             if (undefined !== options.effectspeed) {
-                options.effect_speed = options.effectspeed; 
+                options.effect_speed = options.effectspeed;
                 delete options.effectspeed;
             }
 
@@ -77,6 +91,8 @@
                 return update();
             });
         }
+
+        update_size();
 
         this.each(function() {
             var self = this;
@@ -132,7 +148,7 @@
 
         /* Force initial check if images should appear. */
         update();
-        
+
         return this;
     };
 
@@ -141,7 +157,7 @@
 
     $.belowthefold = function(element, settings) {
         var fold;
-        
+
         if (settings.container === undefined || settings.container === window) {
             fold = $window.height() + $window.scrollTop();
         } else {
@@ -150,7 +166,7 @@
 
         return fold <= $(element).offset().top - settings.threshold;
     };
-    
+
     $.rightoffold = function(element, settings) {
         var fold;
 
@@ -162,10 +178,10 @@
 
         return fold <= $(element).offset().left - settings.threshold;
     };
-        
+
     $.abovethetop = function(element, settings) {
         var fold;
-        
+
         if (settings.container === undefined || settings.container === window) {
             fold = $window.scrollTop();
         } else {
@@ -174,10 +190,10 @@
 
         return fold >= $(element).offset().top + settings.threshold  + $(element).height();
     };
-    
+
     $.leftofbegin = function(element, settings) {
         var fold;
-        
+
         if (settings.container === undefined || settings.container === window) {
             fold = $window.scrollLeft();
         } else {
@@ -188,7 +204,7 @@
     };
 
     $.inviewport = function(element, settings) {
-         return !$.rightofscreen(element, settings) && !$.leftofscreen(element, settings) && 
+         return !$.rightofscreen(element, settings) && !$.leftofscreen(element, settings) &&
                 !$.belowthefold(element, settings) && !$.abovethetop(element, settings);
      };
 
